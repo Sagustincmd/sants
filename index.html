@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SANTBROTHERS — Encuentra las 3 llaves ocultas en la ciudad. Gana el Huevo de Oro.">
+<title>SANTBROTHERS — EL OASIS</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple:#7c4dff;
+  --purple-dim:rgba(124,77,255,0.15);
+  --purple-glow:rgba(124,77,255,0.4);
+  --gold:#c9a84c;
+  --gold-light:#f0d080;
+  --bg:#060610;
+  --surface:rgba(255,255,255,0.03);
+  --border:rgba(124,77,255,0.25);
+  --text:#e8e8ff;
+  --muted:#5a5a88;
+  --mono:'Share Tech Mono',monospace;
+  --title:'Cinzel',serif;
+  --body:'Exo 2',sans-serif;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;}
+
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
+}
+.grid-bg{
+  position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(124,77,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,77,255,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.grid-bg::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(124,77,255,0.12) 0%,transparent 70%);
+}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 28px;height:64px;
+  background:rgba(6,6,16,0.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.nav-logo{
+  font-family:var(--title);font-size:16px;letter-spacing:5px;
+  color:#fff;display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.nav-logo img{height:34px;filter:invert(1);}
+.nav-links{display:flex;gap:2px;}
+.nav-link{
+  background:transparent;border:none;color:var(--muted);
+  padding:8px 14px;font-family:var(--mono);font-size:11px;letter-spacing:2px;
+  cursor:pointer;text-transform:uppercase;transition:color .2s;
+  border-bottom:2px solid transparent;
+}
+.nav-link:hover{color:var(--text);}
+.nav-link.active{color:var(--purple);border-bottom-color:var(--purple);}
+
+/* PAGES */
+.page{display:none;position:relative;z-index:1;min-height:calc(100vh - 64px);padding-top:64px;}
+.page.active{display:block;}
+
+/* ===== HOME ===== */
+#page-home{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;text-align:center;
+  padding:80px 24px 60px;
+}
+.wings-logo{
+  width:150px;margin-bottom:28px;
+  filter:invert(1) drop-shadow(0 0 24px rgba(124,77,255,0.5));
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.home-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:8px;
+  color:var(--purple);text-transform:uppercase;margin-bottom:16px;
+}
+.home-title{
+  font-family:var(--title);font-size:clamp(36px,6vw,68px);
+  font-weight:900;letter-spacing:4px;line-height:1.05;
+  color:#fff;margin-bottom:12px;
+}
+.home-title .gold{color:var(--gold);}
+.home-subtitle{
+  font-size:16px;color:var(--muted);max-width:480px;
+  line-height:1.7;margin:0 auto 40px;font-weight:300;
+}
+.countdown-wrap{margin-bottom:44px;}
+.countdown-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:4px;
+  color:var(--muted);margin-bottom:16px;text-transform:uppercase;
+}
+.countdown{display:flex;gap:20px;justify-content:center;align-items:flex-start;}
+.count-unit{text-align:center;}
+.count-num{
+  font-family:var(--title);font-size:clamp(36px,5vw,52px);font-weight:700;
+  color:var(--purple);line-height:1;display:block;
+  text-shadow:0 0 30px rgba(124,77,255,0.5);
+}
+.count-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:3px;margin-top:4px;}
+.count-sep{
+  font-family:var(--title);font-size:clamp(28px,4vw,44px);
+  color:rgba(124,77,255,0.3);margin-top:4px;
+}
+.prize-box{
+  background:rgba(201,168,76,0.05);
+  border:1px solid rgba(201,168,76,0.3);
+  padding:20px 48px;display:inline-block;margin-bottom:40px;
+  position:relative;
+}
+.prize-box::before,.prize-box::after{
+  content:'◆';position:absolute;color:rgba(201,168,76,0.4);font-size:10px;
+}
+.prize-box::before{top:8px;left:10px;}
+.prize-box::after{bottom:8px;right:10px;}
+.prize-label{font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:6px;}
+.prize-amount{font-family:var(--title);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--gold-light);}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{
+  background:var(--purple);border:none;color:#fff;
+  padding:16px 44px;font-family:var(--mono);font-size:13px;
+  letter-spacing:4px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;
+}
+.btn-primary:hover{background:#6a3de8;transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,77,255,0.4);}
+.btn-secondary{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:14px 36px;font-family:var(--mono);font-size:12px;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;
+}
+.btn-secondary:hover{border-color:var(--purple);color:var(--purple);}
+
+/* HOW IT WORKS */
+.howto{
+  padding:60px 24px;border-top:1px solid var(--border);
+  max-width:760px;margin:0 auto;text-align:center;
+}
+.howto-title{
+  font-family:var(--title);font-size:22px;letter-spacing:4px;
+  color:var(--gold);margin-bottom:8px;
+}
+.howto-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:3px;margin-bottom:40px;}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;text-align:left;}
+.step-card{
+  background:var(--surface);border:1px solid var(--border);
+  padding:24px 20px;position:relative;
+}
+.step-num{
+  font-family:var(--title);font-size:36px;font-weight:900;
+  color:rgba(124,77,255,0.2);margin-bottom:12px;
+}
+.step-title{font-size:14px;font-weight:600;letter-spacing:2px;margin-bottom:6px;color:#fff;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* ===== LOGIN ===== */
+#page-login{
+  display:flex;align-items:center;justify-content:center;
+  min-height:calc(100vh - 64px);padding:20px;
+}
+.login-card{
+  width:100%;max-width:420px;
+  background:rgba(10,10,22,0.9);
+  border:1px solid var(--border);padding:48px 40px;
+  position:relative;
+}
+.login-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--purple),transparent);
+}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo img{height:48px;filter:invert(1);opacity:.9;}
+.login-title{font-family:var(--title);font-size:20px;letter-spacing:3px;text-align:center;margin-bottom:4px;}
+.login-sub{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;letter-spacing:2px;margin-bottom:32px;}
+.field-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--purple);
+  display:block;margin-bottom:8px;text-transform:uppercase;
+}
+.field-input{
+  width:100%;background:rgba(124,77,255,0.05);
+  border:1px solid var(--border);color:var(--text);
+  padding:14px 16px;font-family:var(--body);font-size:15px;
+  outline:none;margin-bottom:20px;transition:border-color .2s;
+}
+.field-input:focus{border-color:var(--purple);}
+.field-input::placeholder{color:#2a2a44;}
+.btn-full{width:100%;padding:15px;font-size:13px;letter-spacing:4px;margin-bottom:16px;}
+.divider-or{
+  text-align:center;color:var(--muted);font-family:var(--mono);
+  font-size:11px;letter-spacing:3px;margin:16px 0;position:relative;
+}
+.divider-or::before,.divider-or::after{
+  content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border);
+}
+.divider-or::before{left:0;}
+.divider-or::after{right:0;}
+
+/* ===== GAME ===== */
+#page-game{padding:80px 0 40px;}
+.game-inner{max-width:640px;margin:0 auto;padding:0 20px;}
+.game-header{
+  text-align:center;padding:40px 0 28px;
+  border-bottom:1px solid var(--border);margin-bottom:28px;
+}
+.game-player-tag{
+  font-family:var(--mono);font-size:11px;color:var(--purple);
+  letter-spacing:3px;margin-bottom:8px;
+}
+.game-title{font-family:var(--title);font-size:26px;letter-spacing:4px;}
+.progress-track{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin-top:20px;
+}
+.progress-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--muted);background:transparent;transition:all .4s;
+}
+.progress-dot.done{background:var(--purple);border-color:var(--purple);box-shadow:0 0 12px rgba(124,77,255,0.7);}
+.progress-dot.active{border-color:var(--purple);animation:pdpulse 2s infinite;}
+@keyframes pdpulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0.7);}
+  50%{box-shadow:0 0 0 8px rgba(124,77,255,0);}
+}
+.progress-line{width:80px;height:2px;background:var(--border);transition:background .4s;}
+.progress-line.done{background:var(--purple);}
+
+.key-card{
+  background:var(--surface);border:1px solid var(--border);
+  margin-bottom:14px;position:relative;overflow:hidden;
+  transition:border-color .3s,opacity .3s;
+}
+.key-card.active{border-color:rgba(124,77,255,0.6);}
+.key-card.completed{border-color:rgba(76,255,143,0.35);}
+.key-card.locked{opacity:.4;pointer-events:none;}
+.key-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;
+}
+.key-card.active::before{background:var(--purple);}
+.key-card.completed::before{background:#4cff8f;}
+.key-top{display:flex;align-items:center;gap:16px;padding:20px 20px 16px;}
+.key-num{
+  font-family:var(--title);font-size:40px;font-weight:900;
+  color:rgba(124,77,255,0.2);min-width:50px;line-height:1;transition:color .3s;
+}
+.key-card.active .key-num{color:var(--purple);}
+.key-card.completed .key-num{color:#4cff8f;}
+.key-body{flex:1;}
+.key-name{font-family:var(--title);font-size:15px;letter-spacing:2px;color:#fff;margin-bottom:4px;}
+.key-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+.key-badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  padding:6px 12px;text-transform:uppercase;white-space:nowrap;align-self:flex-start;
+}
+.badge-active{background:rgba(124,77,255,0.15);color:var(--purple);border:1px solid rgba(124,77,255,0.3);}
+.badge-done{background:rgba(76,255,143,0.1);color:#4cff8f;border:1px solid rgba(76,255,143,0.3);}
+.badge-locked{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.08);}
+.key-actions{padding:0 20px 20px;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-qr{
+  background:var(--purple-dim);border:1px solid rgba(124,77,255,0.4);
+  color:var(--purple);padding:10px 20px;font-family:var(--mono);
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-qr:hover{background:rgba(124,77,255,0.25);}
+.btn-stories{
+  background:transparent;border:1px solid rgba(255,100,100,0.3);
+  color:#ff7070;padding:10px 20px;font-family:var(--mono);
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-stories:hover{background:rgba(255,100,100,0.08);}
+
+/* ===== SCANNER MODAL ===== */
+.modal-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(4,4,14,0.96);z-index:1000;
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#0a0a1e;border:1px solid var(--border);
+  padding:40px 32px;max-width:400px;width:100%;text-align:center;
+  position:relative;
+}
+.modal-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--purple),transparent);
+}
+.modal-title{font-family:var(--title);font-size:18px;letter-spacing:3px;margin-bottom:6px;}
+.modal-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:28px;}
+.qr-frame{
+  width:190px;height:190px;margin:0 auto 24px;
+  border:2px solid rgba(124,77,255,0.5);position:relative;
+  background:rgba(124,77,255,0.03);
+  display:flex;align-items:center;justify-content:center;
+}
+.qr-corner{position:absolute;width:20px;height:20px;}
+.qr-corner.tl{top:-2px;left:-2px;border-top:3px solid var(--purple);border-left:3px solid var(--purple);}
+.qr-corner.tr{top:-2px;right:-2px;border-top:3px solid var(--purple);border-right:3px solid var(--purple);}
+.qr-corner.bl{bottom:-2px;left:-2px;border-bottom:3px solid var(--purple);border-left:3px solid var(--purple);}
+.qr-corner.br{bottom:-2px;right:-2px;border-bottom:3px solid var(--purple);border-right:3px solid var(--purple);}
+.scan-line{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--purple),transparent);
+  animation:scanline 2s linear infinite;
+}
+@keyframes scanline{0%{top:0;}100%{top:100%;}}
+.qr-icon-big{font-size:52px;opacity:.2;}
+.modal-hint{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;}
+.btn-close{
+  position:absolute;top:14px;right:16px;background:transparent;
+  border:none;color:var(--muted);font-size:18px;cursor:pointer;
+  font-family:var(--mono);transition:color .2s;
+}
+.btn-close:hover{color:var(--text);}
+.success-msg{
+  display:none;padding:16px;
+  border:1px solid rgba(76,255,143,0.3);background:rgba(76,255,143,0.05);
+  margin-top:16px;
+}
+.success-msg.show{display:block;}
+.success-text{color:#4cff8f;font-family:var(--mono);font-size:13px;letter-spacing:2px;}
+
+/* ===== RANKING ===== */
+#page-ranking{padding:80px 0 40px;}
+.ranking-inner{max-width:640px;margin:0 auto;padding:0 20px;}
+.section-header{
+  text-align:center;padding:40px 0 28px;
+  border-bottom:1px solid var(--border);margin-bottom:28px;
+}
+.section-header h2{font-family:var(--title);font-size:26px;letter-spacing:4px;}
+.section-header p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:3px;margin-top:8px;}
+
+.rank-row{
+  display:flex;align-items:center;gap:14px;
+  background:var(--surface);border:1px solid var(--border);
+  padding:14px 18px;margin-bottom:10px;transition:border-color .2s;
+}
+.rank-row:hover{border-color:rgba(124,77,255,0.4);}
+.rank-row.gold-row{border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.04);}
+.rank-pos{
+  font-family:var(--title);font-size:20px;font-weight:700;
+  color:var(--muted);min-width:36px;text-align:center;
+}
+.rank-row.gold-row .rank-pos{color:var(--gold);}
+.rank-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(124,77,255,0.12);border:1px solid rgba(124,77,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--purple);font-family:var(--mono);
+  flex-shrink:0;
+}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-size:15px;font-weight:600;letter-spacing:1px;}
+.rank-detail{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.rank-dots{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.kdot{
+  width:11px;height:11px;border-radius:50%;
+  border:1.5px solid rgba(124,77,255,0.3);background:transparent;
+}
+.kdot.lit{background:var(--purple);border-color:var(--purple);box-shadow:0 0 6px rgba(124,77,255,0.6);}
+.rank-time{font-family:var(--mono);font-size:11px;color:var(--muted);flex-shrink:0;}
+
+/* ===== ADMIN ===== */
+#page-admin{padding:80px 0 40px;}
+.admin-inner{max-width:720px;margin:0 auto;padding:0 20px;}
+.admin-header-bar{
+  padding:36px 0 20px;border-bottom:1px solid var(--border);margin-bottom:24px;
+}
+.admin-header-bar h2{font-family:var(--title);font-size:22px;letter-spacing:4px;color:var(--gold);}
+.admin-header-bar p{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:6px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  padding:16px;text-align:center;
+}
+.stat-num{font-family:var(--title);font-size:30px;font-weight:700;color:var(--purple);}
+.stat-lbl{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+.admin-controls{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
+.btn-control{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:10px 18px;font-family:var(--mono);
+  font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .2s;
+}
+.btn-control:hover{border-color:var(--purple);color:var(--purple);}
+.btn-control.danger:hover{border-color:#ff6060;color:#ff6060;}
+.mini-title{
+  font-family:var(--mono);font-size:11px;letter-spacing:4px;
+  color:var(--purple);margin-bottom:14px;text-transform:uppercase;
+}
+.validate-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1px solid var(--border);
+  padding:12px 16px;margin-bottom:10px;transition:opacity .3s;
+}
+.v-info{flex:1;min-width:0;}
+.v-name{font-size:14px;font-weight:600;letter-spacing:1px;}
+.v-detail{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
+.btn-approve{
+  background:rgba(76,255,143,0.08);border:1px solid rgba(76,255,143,0.3);
+  color:#4cff8f;padding:8px 14px;font-family:var(--mono);font-size:10px;
+  letter-spacing:1px;cursor:pointer;text-transform:uppercase;white-space:nowrap;
+}
+.btn-reject{
+  background:rgba(255,80,80,0.06);border:1px solid rgba(255,80,80,0.25);
+  color:#ff6060;padding:8px 14px;font-family:var(--mono);font-size:10px;
+  letter-spacing:1px;cursor:pointer;text-transform:uppercase;white-space:nowrap;
+}
+
+/* ADMIN GATE */
+.admin-gate{
+  display:flex;align-items:center;justify-content:center;
+  min-height:calc(100vh - 64px);padding:20px;
+}
+.gate-card{
+  background:rgba(10,10,22,0.9);border:1px solid var(--border);
+  padding:48px 40px;max-width:400px;width:100%;text-align:center;
+  position:relative;
+}
+.gate-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.gate-title{font-family:var(--title);font-size:20px;letter-spacing:3px;margin-bottom:6px;color:var(--gold);}
+.gate-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:32px;}
+
+/* NOTIFICATION */
+.notif{
+  position:fixed;bottom:24px;right:24px;z-index:9998;
+  background:#0d0d22;border:1px solid var(--purple);
+  padding:14px 20px;font-family:var(--mono);font-size:12px;
+  letter-spacing:2px;color:var(--purple);
+  transform:translateX(120%);transition:transform .3s ease;
+  max-width:320px;line-height:1.5;
+}
+.notif.show{transform:translateX(0);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .nav{padding:0 16px;}
+  .nav-links{gap:0;}
+  .nav-link{padding:8px 10px;font-size:10px;letter-spacing:1px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .prize-box{padding:16px 28px;}
+  .countdown{gap:12px;}
+  .count-num{font-size:32px;}
+  .count-sep{font-size:24px;}
+  .login-card,.gate-card{padding:36px 24px;}
+  .key-top{gap:12px;}
+  .key-num{font-size:32px;min-width:40px;}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="goTo('home')">
+    <img src="/logo.png" alt="SANTBROTHERS" onerror="this.style.display='none'">
+    SANTBROTHERS
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" data-page="home" onclick="goTo('home')">Inicio</button>
+    <button class="nav-link" data-page="login" onclick="goTo('login')">Jugar</button>
+    <button class="nav-link" data-page="ranking" onclick="goTo('ranking')">Ranking</button>
+    <button class="nav-link" data-page="admin" onclick="goTo('admin')">Admin</button>
+  </div>
+</nav>
+
+<!-- =================== HOME =================== -->
+<div id="page-home" class="page active">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:80px 24px 60px;">
+    <img src="/logo.png" class="wings-logo" alt="SANTBROTHERS" onerror="this.style.display='none'">
+    <p class="home-eyebrow">// misión clasificada — 2026 //</p>
+    <h1 class="home-title">ENCUENTRA<br>LAS 3 <span class="gold">LLAVES</span></h1>
+    <p class="home-subtitle">Tres QR ocultos en la ciudad. Tres niveles. Un solo ganador.<br>¿Tenés lo que hace falta para encontrarlos todos?</p>
+
+    <div class="countdown-wrap">
+      <p class="countdown-label">// el juego comienza en //</p>
+      <div class="countdown">
+        <div class="count-unit"><span class="count-num" id="cd-d">00</span><div class="count-lbl">días</div></div>
+        <span class="count-sep">:</span>
+        <div class="count-unit"><span class="count-num" id="cd-h">00</span><div class="count-lbl">horas</div></div>
+        <span class="count-sep">:</span>
+        <div class="count-unit"><span class="count-num" id="cd-m">00</span><div class="count-lbl">min</div></div>
+        <span class="count-sep">:</span>
+        <div class="count-unit"><span class="count-num" id="cd-s">00</span><div class="count-lbl">seg</div></div>
+      </div>
+    </div>
+
+    <div class="prize-box">
+      <p class="prize-label">⬡ huevo de oro ⬡</p>
+      <p class="prize-amount">$250.000</p>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn-primary" onclick="goTo('login')">INICIAR MISIÓN →</button>
+      <button class="btn-secondary" onclick="goTo('ranking')">VER RANKING</button>
+    </div>
+  </div>
+
+  <!-- CÓMO FUNCIONA -->
+  <div class="howto">
+    <h2 class="howto-title">¿CÓMO FUNCIONA?</h2>
+    <p class="howto-sub">// cuatro pasos para ganar el huevo de oro //</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-title">REGISTRATE</div>
+        <p class="step-desc">Ingresá con tu mail o celular. Sin contraseñas, en segundos.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-title">ENCONTRÁ EL QR</div>
+        <p class="step-desc">Buscá los QR de SANTBROTHERS pegados en lugares estratégicos de la ciudad.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-title">PUBLICÁ EN STORIES</div>
+        <p class="step-desc">Compartí en tus Instagram stories que desbloqueaste el nivel para validarlo.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-title">GANÁS</div>
+        <p class="step-desc">El primero en completar las 3 llaves se lleva el Huevo de Oro de $250.000.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== LOGIN =================== -->
+<div id="page-login" class="page">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:20px;">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="/logo.png" alt="SANTBROTHERS" onerror="this.style.display='none'">
+      </div>
+      <h2 class="login-title">ACCESO AL OASIS</h2>
+      <p class="login-sub">// sin contraseñas — solo tu identidad //</p>
+
+      <label class="field-label">Tu email</label>
+      <input class="field-input" type="email" placeholder="hunter@mail.com" id="login-email" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="btn-primary btn-full" onclick="doLogin()">ENTRAR AL JUEGO →</button>
+
+      <div class="divider-or">o</div>
+
+      <label class="field-label">Número de celular</label>
+      <input class="field-input" type="tel" placeholder="+54 9 xxx xxx xxxx" id="login-phone" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="btn-secondary btn-full" style="width:100%;padding:14px;font-size:12px;" onclick="doLogin()">ENTRAR CON CELULAR →</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== GAME =================== -->
+<div id="page-game" class="page">
+  <div class="game-inner">
+    <div class="game-header">
+      <p class="game-player-tag">// jugador: <span id="player-name">hunter</span> //</p>
+      <h2 class="game-title">TUS LLAVES</h2>
+      <div class="progress-track">
+        <div class="progress-dot active" id="pd1"></div>
+        <div class="progress-line" id="pl1"></div>
+        <div class="progress-dot" id="pd2"></div>
+        <div class="progress-line" id="pl2"></div>
+        <div class="progress-dot" id="pd3"></div>
+      </div>
+    </div>
+
+    <!-- LLAVE 1 -->
+    <div class="key-card active" id="kcard1">
+      <div class="key-top">
+        <div class="key-num">01</div>
+        <div class="key-body">
+          <div class="key-name">INICIO DEL OASIS</div>
+          <p class="key-desc">El primer QR está escondido en la ciudad. Encontralo, escanealo desde acá y publicá en stories para validar.</p>
+        </div>
+        <div class="key-badge badge-active" id="kb1">ACTIVA</div>
+      </div>
+      <div class="key-actions" id="ka1">
+        <button class="btn-qr" onclick="openScanner(1)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="9" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="1" y="9" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="2.2" y="2.2" width="2.5" height="2.5" fill="currentColor"/>
+            <rect x="10.2" y="2.2" width="2.5" height="2.5" fill="currentColor"/>
+            <rect x="2.2" y="10.2" width="2.5" height="2.5" fill="currentColor"/>
+            <rect x="9" y="9" width="2" height="2" fill="currentColor"/>
+            <rect x="12" y="9" width="2" height="1.2" fill="currentColor"/>
+            <rect x="9" y="12" width="1.2" height="2" fill="currentColor"/>
+            <rect x="12" y="12" width="2" height="2" fill="currentColor"/>
+          </svg>
+          ESCANEAR QR
+        </button>
+        <button class="btn-stories" onclick="shareStories(1)">📸 PUBLICAR EN STORIES</button>
+      </div>
+    </div>
+
+    <!-- LLAVE 2 -->
+    <div class="key-card locked" id="kcard2">
+      <div class="key-top">
+        <div class="key-num">02</div>
+        <div class="key-body">
+          <div class="key-name">SANT II</div>
+          <p class="key-desc">El segundo sello aguarda en las calles. Solo quienes completaron el primer nivel pueden seguir.</p>
+        </div>
+        <div class="key-badge badge-locked" id="kb2">🔒 BLOQUEADA</div>
+      </div>
+    </div>
+
+    <!-- LLAVE 3 -->
+    <div class="key-card locked" id="kcard3">
+      <div class="key-top">
+        <div class="key-num">03</div>
+        <div class="key-body">
+          <div class="key-name">SOLO UNO GANARÁ</div>
+          <p class="key-desc">La llave final. El QR que revela la ubicación del Huevo de Oro. ¿Llegás primero?</p>
+        </div>
+        <div class="key-badge badge-locked" id="kb3">🔒 BLOQUEADA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== RANKING =================== -->
+<div id="page-ranking" class="page">
+  <div class="ranking-inner">
+    <div class="section-header">
+      <h2>TABLA DE LÍDERES</h2>
+      <p>// actualizado en tiempo real — 1 junio 2026 //</p>
+    </div>
+    <div id="ranking-list"></div>
+    <div style="text-align:center;margin-top:24px;">
+      <button class="btn-secondary" onclick="shareRanking()">📸 COMPARTIR EN STORIES</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== ADMIN =================== -->
+<div id="page-admin" class="page">
+  <div class="admin-inner">
+
+    <!-- GATE -->
+    <div id="admin-gate" class="admin-gate">
+      <div class="gate-card">
+        <h2 class="gate-title">PANEL DE CONTROL</h2>
+        <p class="gate-sub">// acceso exclusivo equipo SANTBROTHERS //</p>
+        <label class="field-label" style="text-align:left;display:block;">Contraseña admin</label>
+        <input class="field-input" type="password" placeholder="••••••••" id="admin-pass" onkeydown="if(event.key==='Enter')adminLogin()">
+        <button class="btn-primary" style="width:100%;padding:15px;" onclick="adminLogin()">ACCEDER →</button>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div id="admin-panel" style="display:none;">
+      <div class="admin-header-bar">
+        <h2>⬡ CONTROL DEL JUEGO</h2>
+        <p>// panel exclusivo santbrothers — 1 junio 2026 //</p>
+      </div>
+
+      <div class="admin-controls">
+        <button class="btn-control" onclick="notify('⏸ Juego pausado correctamente')">⏸ Pausar juego</button>
+        <button class="btn-control" onclick="notify('↺ QRs regenerados')">↺ Regenerar QRs</button>
+        <button class="btn-control" onclick="notify('⤓ Datos exportados')">⤓ Exportar datos</button>
+        <button class="btn-control danger" onclick="confirmReset()">⚠ Reset total</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">47</div><div class="stat-lbl">jugadores</div></div>
+        <div class="stat-card"><div class="stat-num">12</div><div class="stat-lbl">llave 1</div></div>
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-lbl">llave 2</div></div>
+        <div class="stat-card"><div class="stat-num">1</div><div class="stat-lbl">llave 3</div></div>
+      </div>
+
+      <p class="mini-title">// validaciones pendientes //</p>
+      <div id="admin-validations"></div>
+
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);">
+        <p class="mini-title">// jugadores registrados //</p>
+        <div id="admin-players"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCANNER MODAL -->
+<div class="modal-overlay" id="scanner-modal">
+  <div class="modal-box">
+    <button class="btn-close" onclick="closeScanner()">✕</button>
+    <h3 class="modal-title">ESCANEAR QR</h3>
+    <p class="modal-sub">// apuntá la cámara al QR de la ciudad //</p>
+    <div class="qr-frame">
+      <div class="qr-corner tl"></div>
+      <div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div>
+      <div class="qr-corner br"></div>
+      <div class="scan-line"></div>
+      <div class="qr-icon-big">⬡</div>
+    </div>
+    <p class="modal-hint">— o ingresá el código manualmente —</p>
+    <input class="field-input" type="text" placeholder="SANT-XXXX-XXXX" id="manual-code"
+      style="text-align:center;letter-spacing:3px;text-transform:uppercase;"
+      onkeydown="if(event.key==='Enter')validateCode()">
+    <button class="btn-primary" style="width:100%;padding:15px;margin-bottom:0;" onclick="validateCode()">VALIDAR CÓDIGO →</button>
+    <div class="success-msg" id="scan-success">
+      <p class="success-text">✓ LLAVE DESBLOQUEADA</p>
+      <p style="font-family:var(--mono);font-size:11px;color:#4cff8f;margin-top:6px;letter-spacing:1px;">Publicá en stories para confirmar</p>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+// ---- STATE ----
+let scanningKey = 1;
+let loggedIn = false;
+let playerName = 'hunter';
+let adminLoggedIn = false;
+
+// Códigos QR reales — cambialos antes de imprimir los QR físicos
+const QR_CODES = {
+  1: 'SANT-0001-OASIS',
+  2: 'SANT-0002-SANTII',
+  3: 'SANT-0003-FINAL'
+};
+const ADMIN_PASSWORD = 'sant2026'; // Cambiá esto antes de publicar
+
+const RANKING_DATA = [
+  {pos:1, init:'MG', name:'maru.g',    keys:3, time:'1h 44m'},
+  {pos:2, init:'JP', name:'jotape_22', keys:2, time:'3h 12m'},
+  {pos:3, init:'SL', name:'sofi.ld',   keys:2, time:'4h 01m'},
+  {pos:4, init:'CR', name:'carlo_r',   keys:1, time:'5h 30m'},
+  {pos:5, init:'AL', name:'alex_94',   keys:1, time:'6h 11m'},
+  {pos:6, init:'FT', name:'fede.t',    keys:0, time:'—'},
+  {pos:7, init:'LM', name:'luli.m',    keys:0, time:'—'},
+];
+
+const PENDING = [
+  {init:'MG', name:'maru.g',    detail:'Story publicada — llave 3 pendiente de validación', key:3},
+  {init:'JP', name:'jotape_22', detail:'Story publicada — llave 2 pendiente de validación', key:2},
+];
+
+// ---- NAVIGATION ----
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelector('[data-page="' + page + '"]')?.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ---- COUNTDOWN ----
+function tick() {
+  const target = new Date('2026-06-01T00:00:00-03:00');
+  const now = new Date();
+  const diff = Math.max(0, target - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-d').textContent = String(d).padStart(2, '0');
+  document.getElementById('cd-h').textContent = String(h).padStart(2, '0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2, '0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2, '0');
+}
+setInterval(tick, 1000);
+tick();
+
+// ---- LOGIN ----
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const phone = document.getElementById('login-phone').value.trim();
+  const id = email || phone;
+  if (!id) { notify('⚠ Ingresá tu email o celular'); return; }
+  playerName = (email ? email.split('@')[0] : phone.replace(/\s/g,'')).toLowerCase().replace(/[^a-z0-9_.]/g,'');
+  document.getElementById('player-name').textContent = playerName;
+  loggedIn = true;
+  notify('✓ Bienvenido al Oasis, ' + playerName);
+  setTimeout(() => goTo('game'), 500);
+}
+
+// ---- SCANNER ----
+function openScanner(key) {
+  scanningKey = key;
+  document.getElementById('scanner-modal').classList.add('open');
+  document.getElementById('manual-code').value = '';
+  document.getElementById('scan-success').classList.remove('show');
+  setTimeout(() => document.getElementById('manual-code').focus(), 100);
+}
+function closeScanner() {
+  document.getElementById('scanner-modal').classList.remove('open');
+}
+function validateCode() {
+  const raw = document.getElementById('manual-code').value.trim().toUpperCase();
+  if (raw === QR_CODES[scanningKey]) {
+    document.getElementById('scan-success').classList.add('show');
+    setTimeout(() => { closeScanner(); unlockKey(scanningKey); }, 1800);
+  } else {
+    notify('Código incorrecto. Seguí buscando en la ciudad.');
+    document.getElementById('manual-code').style.borderColor = '#ff6060';
+    setTimeout(() => document.getElementById('manual-code').style.borderColor = '', 1200);
+  }
+}
+
+// ---- UNLOCK KEY ----
+function makeActionsHTML(n) {
+  return `
+    <button class="btn-qr" onclick="openScanner(${n})">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+        <rect x="9" y="1" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+        <rect x="1" y="9" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.2"/>
+        <rect x="2.2" y="2.2" width="2.5" height="2.5" fill="currentColor"/>
+        <rect x="10.2" y="2.2" width="2.5" height="2.5" fill="currentColor"/>
+        <rect x="2.2" y="10.2" width="2.5" height="2.5" fill="currentColor"/>
+        <rect x="9" y="9" width="2" height="2" fill="currentColor"/>
+        <rect x="12" y="9" width="2" height="1.2" fill="currentColor"/>
+        <rect x="9" y="12" width="1.2" height="2" fill="currentColor"/>
+        <rect x="12" y="12" width="2" height="2" fill="currentColor"/>
+      </svg>
+      ESCANEAR QR
+    </button>
+    <button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES</button>
+  `;
+}
+
+function unlockKey(n) {
+  const card = document.getElementById('kcard' + n);
+  card.classList.remove('active', 'locked');
+  card.classList.add('completed');
+  document.getElementById('kb' + n).className = 'key-badge badge-done';
+  document.getElementById('kb' + n).textContent = '✓ DESBLOQUEADA';
+  const ka = document.getElementById('ka' + n);
+  if (ka) ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES para validar</button>`;
+
+  const pd = document.getElementById('pd' + n);
+  pd.classList.remove('active');
+  pd.classList.add('done');
+
+  if (n < 3) {
+    document.getElementById('pl' + n).classList.add('done');
+    const next = document.getElementById('kcard' + (n + 1));
+    next.classList.remove('locked');
+    next.classList.add('active');
+    document.getElementById('kb' + (n + 1)).className = 'key-badge badge-active';
+    document.getElementById('kb' + (n + 1)).textContent = 'ACTIVA';
+    if (!document.getElementById('ka' + (n + 1))) {
+      const actDiv = document.createElement('div');
+      actDiv.className = 'key-actions';
+      actDiv.id = 'ka' + (n + 1);
+      actDiv.innerHTML = makeActionsHTML(n + 1);
+      next.appendChild(actDiv);
+    }
+    document.getElementById('pd' + (n + 1)).classList.add('active');
+  }
+  notify('🔓 LLAVE ' + n + ' DESBLOQUEADA — publicá en stories para validar');
+}
+
+function shareStories(n) {
+  notify('📸 Mostrá esta pantalla en tus stories de @santbrothers y etiquetanos');
+}
+
+// ---- RANKING ----
+function renderRanking() {
+  document.getElementById('ranking-list').innerHTML = RANKING_DATA.map(r => `
+    <div class="rank-row${r.pos <= 1 ? ' gold-row' : ''}">
+      <div class="rank-pos">#${String(r.pos).padStart(2,'0')}</div>
+      <div class="rank-avatar">${r.init}</div>
+      <div class="rank-info">
+        <div class="rank-name">${r.name}</div>
+        <div class="rank-detail">${r.keys} llave${r.keys !== 1 ? 's' : ''} encontrada${r.keys !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="rank-dots">
+        ${[1,2,3].map(i => `<div class="kdot${i <= r.keys ? ' lit' : ''}"></div>`).join('')}
+      </div>
+      <div class="rank-time">${r.time}</div>
+    </div>
+  `).join('');
+}
+renderRanking();
+
+function shareRanking() {
+  notify('📸 Compartí el ranking en tus stories con #SantbrothersOasis');
+}
+
+// ---- ADMIN ----
+function adminLogin() {
+  const p = document.getElementById('admin-pass').value;
+  if (p === ADMIN_PASSWORD) {
+    adminLoggedIn = true;
+    document.getElementById('admin-gate').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    renderAdmin();
+    notify('✓ Bienvenido al panel de control');
+  } else {
+    notify('⚠ Contraseña incorrecta');
+    document.getElementById('admin-pass').style.borderColor = '#ff6060';
+    setTimeout(() => document.getElementById('admin-pass').style.borderColor = '', 1200);
+  }
+}
+
+function renderAdmin() {
+  document.getElementById('admin-validations').innerHTML = PENDING.length
+    ? PENDING.map((v, i) => `
+        <div class="validate-row" id="vrow-${i}">
+          <div class="rank-avatar">${v.init}</div>
+          <div class="v-info">
+            <div class="v-name">${v.name}</div>
+            <div class="v-detail">${v.detail}</div>
+          </div>
+          <button class="btn-approve" onclick="approveVal(${i})">✓ Aprobar</button>
+          <button class="btn-reject" onclick="rejectVal(${i})">✗ Rechazar</button>
+        </div>
+      `).join('')
+    : `<p style="font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:2px;padding:16px 0;">No hay validaciones pendientes.</p>`;
+
+  document.getElementById('admin-players').innerHTML = RANKING_DATA.map(r => `
+    <div class="validate-row">
+      <div class="rank-avatar">${r.init}</div>
+      <div class="v-info">
+        <div class="v-name">${r.name}</div>
+        <div class="v-detail">${r.keys} llaves — tiempo: ${r.time}</div>
+      </div>
+      <div class="rank-dots" style="margin-left:auto;">
+        ${[1,2,3].map(i => `<div class="kdot${i <= r.keys ? ' lit' : ''}"></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function approveVal(i) {
+  const row = document.getElementById('vrow-' + i);
+  row.style.opacity = '0.35';
+  row.querySelector('.btn-approve').textContent = '✓ Aprobado';
+  row.querySelector('.btn-approve').disabled = true;
+  row.querySelector('.btn-reject').disabled = true;
+  notify('✓ Validación aprobada — ranking actualizado');
+}
+function rejectVal(i) {
+  const row = document.getElementById('vrow-' + i);
+  row.style.opacity = '0.35';
+  row.querySelector('.btn-reject').textContent = '✗ Rechazado';
+  row.querySelector('.btn-approve').disabled = true;
+  row.querySelector('.btn-reject').disabled = true;
+  notify('Validación rechazada');
+}
+function confirmReset() {
+  if (confirm('¿Seguro que querés hacer un reset total del juego? Esta acción no se puede deshacer.')) {
+    notify('⚠ Reset ejecutado — juego reiniciado');
+  }
+}
+
+// ---- NOTIFICATIONS ----
+let notifTimer = null;
+function notify(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (notifTimer) clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Close modal on overlay click
+document.getElementById('scanner-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeScanner();
+});
+</script>
+
+</body>
+</html>
