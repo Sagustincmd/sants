@@ -412,11 +412,14 @@ function goTo(page) {
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   document.querySelector('[data-page="' + page + '"]')?.classList.add('active');
-  setTimeout(() => {
-    window.scrollTo({top: 0, behavior: 'instant'});
-  }, 10);
-  if (page === 'ranking') loadRanking();
-
+  if (page === 'ranking') {
+    loadRanking();
+    setTimeout(() => {
+      document.getElementById('page-ranking').scrollIntoView({behavior: 'smooth', block: 'start'});
+    }, 100);
+  } else {
+    document.getElementById('page-' + page).scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
 }
  
 // COUNTDOWN
