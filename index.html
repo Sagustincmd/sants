@@ -439,6 +439,7 @@ function checkLaunch() {
   if (now < launch) {
     document.querySelector('[data-page="login"]').style.display = 'none';
     document.querySelector('[data-page="ranking"]').style.display = 'none';
+    document.querySelector('.cta-row').style.display = 'none';
     const originalGoTo = goTo;
     window.goTo = function(page) {
       if (page === 'login' || page === 'ranking') {
