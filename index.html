@@ -432,7 +432,24 @@ function tick() {
   document.getElementById('cd-s').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
 }
 setInterval(tick, 1000); tick();
- 
+ // BLOQUEO HASTA EL 1 DE JUNIO
+function checkLaunch() {
+  const launch = new Date('2026-06-01T00:00:00-03:00');
+  const now = new Date();
+  if (now < launch) {
+    document.querySelector('[data-page="login"]').style.display = 'none';
+    document.querySelector('[data-page="ranking"]').style.display = 'none';
+    const originalGoTo = goTo;
+    window.goTo = function(page) {
+      if (page === 'login' || page === 'ranking') {
+        notify('⚠ El juego comienza el 1 de junio. ¡Preparate!');
+        return;
+      }
+      originalGoTo(page);
+    };
+  }
+}
+checkLaunch();
 // LOGIN — guarda jugador en Supabase
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
