@@ -440,13 +440,20 @@ function checkLaunch() {
     document.querySelector('[data-page="login"]').style.display = 'none';
     document.querySelector('[data-page="ranking"]').style.display = 'none';
     document.querySelector('.cta-row').style.display = 'none';
-    const originalGoTo = goTo;
+    document.querySelectorAll('.btn-primary, .btn-secondary').forEach(b => {
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes('login')) b.style.display = 'none';
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes('ranking')) b.style.display = 'none';
+    });
     window.goTo = function(page) {
       if (page === 'login' || page === 'ranking') {
         notify('⚠ El juego comienza el 1 de junio. ¡Preparate!');
         return;
       }
-      originalGoTo(page);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelector('[data-page="' + page + '"]')?.classList.add('active');
+      document.getElementById('page-' + page).scrollIntoView({behavior:'smooth', block:'start'});
     };
   }
 }
