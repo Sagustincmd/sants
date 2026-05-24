@@ -434,7 +434,7 @@ function tick() {
 setInterval(tick, 1000); tick();
 // BLOQUEO HASTA EL 1 DE JUNIO
 function checkLaunch() {
-  const launch = new Date('2026-05-25T00:00:00-03:00');
+  const launch = new Date('2026-05-01T00:00:00-03:00');
   const now = new Date();
   if (now < launch) {
     document.querySelector('[data-page="login"]').style.display = 'none';
