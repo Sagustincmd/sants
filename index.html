@@ -559,14 +559,30 @@ function unlockKey(n) {
  
 // STORIES — abre Instagram
 function shareStories(n) {
+  const images = {
+    1: '/llave1.png',
+    2: '/llave1.png',
+    3: '/llave1.png'
+  };
+
+  // Descarga la imagen automáticamente
+  const link = document.createElement('a');
+  link.href = images[n];
+  link.download = 'santbrothers-llave' + n + '.png';
+  link.click();
+
+  // Abre Instagram después de 1 segundo
   const isMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if (isMovil) {
-    window.location.href = 'instagram://story-camera';
-    setTimeout(() => window.open('https://www.instagram.com/' + INSTAGRAM_USER + '/', '_blank'), 1500);
-  } else {
-    window.open('https://www.instagram.com/' + INSTAGRAM_USER + '/', '_blank');
-  }
-  notify('📸 Mostrá tu llave en stories y etiquetá a @' + INSTAGRAM_USER);
+  setTimeout(() => {
+    if (isMovil) {
+      window.location.href = 'instagram://story-camera';
+      setTimeout(() => window.open('https://www.instagram.com/' + INSTAGRAM_USER + '/', '_blank'), 1500);
+    } else {
+      window.open('https://www.instagram.com/' + INSTAGRAM_USER + '/', '_blank');
+    }
+  }, 1000);
+
+  notify('📸 Imagen descargada — subila a tus stories y etiquetá a @' + INSTAGRAM_USER);
 }
  
 // RANKING — carga desde Supabase
