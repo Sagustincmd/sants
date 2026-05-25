@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <!-- SUPABASE SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -366,12 +367,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
     <button class="btn-close" onclick="closeScanner()">✕</button>
     <h3 class="modal-title">ESCANEAR QR</h3>
     <p class="modal-sub">// apuntá la cámara al QR de la ciudad //</p>
-    <div class="qr-frame">
-      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
-      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
-      <div class="scan-line"></div>
-      <div class="qr-icon-big">⬡</div>
-    </div>
+    <div id="qr-reader" style="width:100%;max-width:250px;margin:0 auto 16px;"></div>
     <p class="modal-hint">— o ingresá el código manualmente —</p>
     <input class="field-input" type="text" placeholder="SANT-XXXX-XXXX" id="manual-code" style="text-align:center;letter-spacing:3px;text-transform:uppercase;" onkeydown="if(event.key==='Enter')validateCode()">
     <button class="btn-primary" style="width:100%;padding:15px;margin-bottom:0;" onclick="validateCode()">VALIDAR CÓDIGO →</button>
@@ -520,15 +516,37 @@ function restoreKey(n) {
 }
  
 // SCANNER
+let html5QrCode = null;
+
 function openScanner(key) {
   if (!currentPlayerId) { notify('⚠ Primero iniciá sesión'); goTo('login'); return; }
   scanningKey = key;
   document.getElementById('scanner-modal').classList.add('open');
   document.getElementById('manual-code').value = '';
   document.getElementById('scan-success').classList.remove('show');
-  setTimeout(() => document.getElementById('manual-code').focus(), 100);
+
+  html5QrCode = new Html5Qrcode("qr-reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: { width: 200, height: 200 } },
+    (decodedText) => {
+      document.getElementById('manual-code').value = decodedText;
+      html5QrCode.stop();
+      validateCode();
+    },
+    (error) => {}
+  ).catch(() => {
+    notify('No se pudo acceder a la cámara. Usá el código manual.');
+  });
 }
-function closeScanner() { document.getElementById('scanner-modal').classList.remove('open'); }
+
+function closeScanner() {
+  if (html5QrCode) {
+    html5QrCode.stop().catch(() => {});
+    html5QrCode = null;
+  }
+  document.getElementById('scanner-modal').classList.remove('open');
+}
  
 async function validateCode() {
   const raw = document.getElementById('manual-code').value.trim().toUpperCase();
