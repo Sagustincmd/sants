@@ -445,6 +445,11 @@ function checkLaunch() {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-home').classList.add('active');
     }
+  } else {
+    // Juego desbloqueado — mostrar todo
+    document.querySelector('[data-page="login"]').style.display = '';
+    document.querySelector('[data-page="ranking"]').style.display = '';
+    document.querySelector('.cta-row').style.display = '';
   }
 }
 checkLaunch();
