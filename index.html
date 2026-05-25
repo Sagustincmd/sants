@@ -553,9 +553,7 @@ async function validateCode() {
 }
  
 function unlockKey(n) {
-  function unlockKey(n) {
   restoreKey(n);
-  // Sacar el botón de stories de la llave siguiente hasta que se desbloquee
   const nextCard = document.getElementById('kcard' + (n + 1));
   if (nextCard) {
     const nextActions = nextCard.querySelector('.key-actions');
