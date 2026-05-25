@@ -497,7 +497,7 @@ function restoreKey(n) {
   document.getElementById('kb' + n).className = 'key-badge badge-done';
   document.getElementById('kb' + n).textContent = '✓ DESBLOQUEADA';
   const ka = document.getElementById('ka' + n);
-  if (ka) ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES</button>`;
+  if (ka) ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES — LLAVE ${n}</button>`;
   document.getElementById('pd' + n).classList.remove('active');
   document.getElementById('pd' + n).classList.add('done');
   if (n < 3) {
@@ -553,7 +553,16 @@ async function validateCode() {
 }
  
 function unlockKey(n) {
+  function unlockKey(n) {
   restoreKey(n);
+  // Sacar el botón de stories de la llave siguiente hasta que se desbloquee
+  const nextCard = document.getElementById('kcard' + (n + 1));
+  if (nextCard) {
+    const nextActions = nextCard.querySelector('.key-actions');
+    if (nextActions) {
+      nextActions.innerHTML = `<button class="btn-qr" onclick="openScanner(${n+1})">⬡ ESCANEAR QR</button>`;
+    }
+  }
   notify('🔓 LLAVE ' + n + ' DESBLOQUEADA — publicá en stories para validar');
 }
  
@@ -565,11 +574,13 @@ function shareStories(n) {
     3: '/llave1.png'
   };
 
-  // Descarga la imagen automáticamente
+  // Descarga la imagen después de 3 segundos
+setTimeout(() => {
   const link = document.createElement('a');
   link.href = images[n];
   link.download = 'santbrothers-llave' + n + '.png';
   link.click();
+}, 3000);
 
   // Abre Instagram después de 1 segundo
   const isMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
