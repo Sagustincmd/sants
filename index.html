@@ -293,20 +293,21 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
       </div>
     </div>
     <div class="key-card locked" id="kcard2">
-      <div class="key-top">
-        <div class="key-num">02</div>
-        <div class="key-body"><div class="key-name">SANT II</div><p class="key-desc">El segundo sello aguarda en las calles. Solo quienes completaron el primer nivel pueden seguir.</p></div>
-        <div class="key-badge badge-locked" id="kb2">🔒 BLOQUEADA</div>
-      </div>
+  <div class="key-top">
+    <div class="key-num">02</div>
+    <div class="key-body"><div class="key-name">SANT II</div><p class="key-desc">El segundo sello aguarda en las calles. Solo quienes completaron el primer nivel pueden seguir.</p></div>
+    <div class="key-badge badge-locked" id="kb2">🔒 BLOQUEADA</div>
+  </div>
+  <div class="key-actions" id="ka2" style="display:none;"></div>
+</div>
     </div>
     <div class="key-card locked" id="kcard3">
-      <div class="key-top">
-        <div class="key-num">03</div>
-        <div class="key-body"><div class="key-name">SOLO UNO GANARÁ</div><p class="key-desc">La llave final. El QR que revela la ubicación del Huevo de Oro. ¿Llegás primero?</p></div>
-        <div class="key-badge badge-locked" id="kb3">🔒 BLOQUEADA</div>
-      </div>
-    </div>
+  <div class="key-top">
+    <div class="key-num">03</div>
+    <div class="key-body"><div class="key-name">SOLO UNO GANARÁ</div><p class="key-desc">La llave final. El QR que revela la ubicación del Huevo de Oro. ¿Llegás primero?</p></div>
+    <div class="key-badge badge-locked" id="kb3">🔒 BLOQUEADA</div>
   </div>
+  <div class="key-actions" id="ka3" style="display:none;"></div>
 </div>
  
 <!-- RANKING -->
@@ -493,7 +494,10 @@ function restoreKey(n) {
   document.getElementById('kb' + n).className = 'key-badge badge-done';
   document.getElementById('kb' + n).textContent = '✓ DESBLOQUEADA';
   const ka = document.getElementById('ka' + n);
-  if (ka) ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES — LLAVE ${n}</button>`;
+ if (ka) {
+  ka.style.display = 'flex';
+  ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES — LLAVE ${n}</button>`;
+}
   document.getElementById('pd' + n).classList.remove('active');
   document.getElementById('pd' + n).classList.add('done');
   if (n < 3) {
