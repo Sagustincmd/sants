@@ -582,7 +582,45 @@ function shareStories(n) {
     }
   }, 1000);
 
-  notify('📸 Imagen descargada — subila a tus stories y etiquetá a @' + INSTAGRAM_USER);
+  // Mostrar popup de instrucciones
+const popup = document.createElement('div');
+popup.style.cssText = `
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(4,4,14,0.96);z-index:2000;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+`;
+popup.innerHTML = `
+  <div style="background:#0a0a1e;border:1px solid rgba(124,77,255,0.4);padding:36px 28px;max-width:360px;width:100%;text-align:center;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#7c4dff,transparent);"></div>
+    <div style="font-size:36px;margin-bottom:16px;">📸</div>
+    <div style="font-family:'Cinzel',serif;font-size:16px;letter-spacing:3px;color:#fff;margin-bottom:8px;">IMAGEN DESCARGADA</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#4cff8f;letter-spacing:2px;margin-bottom:24px;">✓ GUARDADA EN TU GALERÍA</div>
+    <div style="text-align:left;margin-bottom:24px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+        <span style="font-family:'Cinzel',serif;color:#7c4dff;font-size:18px;min-width:24px;">1</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#e8e8ff;line-height:1.5;">Abrí Instagram Stories</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+        <span style="font-family:'Cinzel',serif;color:#7c4dff;font-size:18px;min-width:24px;">2</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#e8e8ff;line-height:1.5;">Tocá el ícono de galería abajo a la izquierda</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+        <span style="font-family:'Cinzel',serif;color:#7c4dff;font-size:18px;min-width:24px;">3</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#e8e8ff;line-height:1.5;">Seleccioná la imagen de SANTBROTHERS</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <span style="font-family:'Cinzel',serif;color:#7c4dff;font-size:18px;min-width:24px;">4</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#e8e8ff;line-height:1.5;">Etiquetá a <span style="color:#7c4dff;">@${INSTAGRAM_USER}</span> y publicá</span>
+      </div>
+    </div>
+    <button onclick="this.closest('div').parentElement.remove()" style="
+      background:#7c4dff;border:none;color:#fff;width:100%;padding:14px;
+      font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;
+      text-transform:uppercase;cursor:pointer;
+    ">ENTENDIDO →</button>
+  </div>
+`;
+document.body.appendChild(popup);
 }
  
 // RANKING — carga desde Supabase
