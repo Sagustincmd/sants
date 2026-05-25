@@ -572,6 +572,12 @@ async function validateCode() {
  
 function unlockKey(n) {
   restoreKey(n);
+  // Agregar botón de stories a la llave recién desbloqueada
+  const ka = document.getElementById('ka' + n);
+  if (ka && !ka.querySelector('.btn-stories')) {
+    ka.innerHTML = `<button class="btn-stories" onclick="shareStories(${n})">📸 PUBLICAR EN STORIES — LLAVE ${n}</button>`;
+  }
+  // Llave siguiente solo con escanear, sin stories
   const nextCard = document.getElementById('kcard' + (n + 1));
   if (nextCard) {
     const nextActions = nextCard.querySelector('.key-actions');
