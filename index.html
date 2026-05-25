@@ -511,7 +511,7 @@ function restoreKey(n) {
       if (!document.getElementById('ka'+(n+1))) {
         const d = document.createElement('div');
         d.className = 'key-actions'; d.id = 'ka'+(n+1);
-        d.innerHTML = `<button class="btn-qr" onclick="openScanner(${n+1})">⬡ ESCANEAR QR</button><button class="btn-stories" onclick="shareStories(${n+1})">📸 PUBLICAR EN STORIES</button>`;
+        d.innerHTML = `<button class="btn-qr" onclick="openScanner(${n+1})">⬡ ESCANEAR QR</button>`;
         next.appendChild(d);
       }
       document.getElementById('pd'+(n+1)).classList.add('active');
